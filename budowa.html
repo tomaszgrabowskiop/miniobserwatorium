@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Budowa heksagonalnego miniobserwatorium</title>
+<style>
+  :root {
+    --ink: #1c1917;
+    --muted: #57534e;
+    --line: #e7e5e4;
+    --paper: #f6f3ee;
+    --card: #fffcf8;
+    --accent: #1e3a5f;
+    --mark: #b45309;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+    font-size: 18px;
+    line-height: 1.55;
+  }
+  header, main { width: min(1080px, calc(100% - 32px)); margin: 0 auto; }
+  header { padding: 36px 0 8px; }
+  h1 { font-size: 34px; line-height: 1.15; margin: 0 0 10px; letter-spacing: -0.02em; }
+  h2 { font-size: 26px; margin: 42px 0 8px; letter-spacing: -0.02em; }
+  h3 { font-size: 19px; margin: 22px 0 6px; }
+  p { margin: 0 0 12px; }
+  a { color: var(--accent); }
+  .lead { font-size: 19px; color: #292524; max-width: 68ch; }
+  nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 18px 0 8px;
+  }
+  nav a {
+    text-decoration: none;
+    border: 1px solid var(--line);
+    background: var(--card);
+    color: var(--ink);
+    border-radius: 999px;
+    padding: 5px 12px;
+    font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-size: 13px;
+  }
+  nav a:hover { border-color: #a8a29e; }
+  .note {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-left: 4px solid var(--mark);
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin: 14px 0 18px;
+    font-size: 16px;
+  }
+  figure { margin: 16px 0 8px; }
+  iframe {
+    width: 100%;
+    height: 640px;
+    border: 1px solid #292524;
+    border-radius: 14px;
+    background: #0b0d11;
+    display: block;
+  }
+  figcaption {
+    font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-size: 13px;
+    color: var(--muted);
+    margin-top: 6px;
+  }
+  ul, ol { margin: 0 0 14px; padding-left: 1.25em; }
+  li { margin: 0 0 6px; }
+  .scroll { overflow-x: auto; margin: 8px 0 16px; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-size: 14px;
+    background: var(--card);
+  }
+  th, td { border-bottom: 1px solid var(--line); text-align: left; padding: 7px 8px; vertical-align: top; }
+  th { font-size: 12px; letter-spacing: 0.03em; text-transform: uppercase; color: var(--muted); }
+  td.num, th.num { white-space: nowrap; }
+  code { font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 0.86em; }
+  footer { width: min(1080px, calc(100% - 32px)); margin: 28px auto 48px; color: var(--muted); font-size: 14px; }
+  @media (max-width: 720px) {
+    iframe { height: 480px; }
+    h1 { font-size: 28px; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>Miniobserwatorium heksagonalne. Instrukcja wykonania</h1>
+  <p class="lead">Sześciokąt foremny, R = 500 mm, posadowienie bez fundamentu: obudowa na XPS/gumie, talerzyki słupa na twardym tarasie przez elastomer (wycięcia w XPS). Słup niesie montaż i nie jest skręcony z obudową. Baza, Z = 0–860 mm, jest osłoną. Dach, Z = 825–1388 mm, stoi na uszczelce i jest spinany czterema klamrami. Elektryka jest czwartym widokiem montażowym.</p>
+  <nav>
+    <a href="#uklad">Układ</a>
+    <a href="#materialy">Materiały</a>
+    <a href="#sprzet">Sprzęt</a>
+    <a href="#slupek">Słupek</a>
+    <a href="#obudowa">Obudowa</a>
+    <a href="#dach">Dach</a>
+    <a href="#konstrukcja">Konstrukcja</a>
+    <a href="#elektronika">Elektronika</a>
+    <a href="#zasilanie">Zasilanie</a>
+    <a href="#montaz">Montaż</a>
+    <a href="#cad">Model CAD</a>
+  </nav>
+</header>
+<main>
+
+<section id="uklad">
+  <h2>Układ i wymagania</h2>
+  <p>Środek (0, 0, 0) w osi słupa, na gumie. +Y północ, −Y południe, +X wschód, −X zachód. Wszystkie rzędne Z od gumy.</p>
+  <div class="scroll">
+  <table>
+    <thead><tr><th>Wymaganie</th><th>Wartość</th></tr></thead>
+    <tbody>
+      <tr><td>Temperatura w komorze</td><td>0 °C do 25 °C</td></tr>
+      <tr><td>Styk słupa z obudową</td><td>Brak połączenia sztywnego. Szczelina w podłodze wypełniona Armaflexem</td></tr>
+      <tr><td>Pole widzenia</td><td>Od 10° nad horyzontem, pełny meridian flip</td></tr>
+      <tr><td>Podparcie słupa</td><td>3 punkty, kąty 0° (E), 120° (NW), 240° (SW), wierzchołki V1, V3, V5</td></tr>
+      <tr><td>Podparcie obudowy</td><td>3 punkty, kąty 60° (NE), 180° (W), 300° (SE), wierzchołki V2, V4, V6</td></tr>
+      <tr><td>Balast</td><td>6 płyt 300×300×50 mm: 3 na ramionach słupa, 3 na ceownikach obudowy</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="scroll">
+  <table>
+    <thead><tr><th>Element</th><th>Z od</th><th>Z do</th><th>Wykonanie</th></tr></thead>
+    <tbody>
+      <tr><td>Talerzyki stóp słupa</td><td>0</td><td>6 mm</td><td>Blacha 100×100×6. Czop kulisty śruby M16 w gnieździe</td></tr>
+      <tr><td>Ceowniki obudowy</td><td>0</td><td>25 mm</td><td>Π 220×25×5, L = 420 mm, półkami w dół. Płyta balastowa do Z = 75 mm</td></tr>
+      <tr><td>Ramiona słupa</td><td>80</td><td>120 mm</td><td>Profil 60×40×3. Płyta balastowa na ramieniu Z = 120–170 mm</td></tr>
+      <tr><td>Podłoga</td><td>215</td><td>277 mm</td><td>Blacha Al 5 mm, na niej PIR 57 mm. Powierzchnia użytkowa Z = 277 mm</td></tr>
+      <tr><td>Ściany bazy</td><td>25</td><td>860 mm</td><td>Długa noga od Z = 25 na stopie. Krótki słupek i rygiel od Z = 185, nad ramieniem słupa. Wieniec Z = 860 mm</td></tr>
+      <tr><td>Czop AM3</td><td>895</td><td>910 mm</td><td>Góra czopa 50 mm nad wieńcem ścian</td></tr>
+      <tr><td>Fartuch dachu</td><td>825</td><td>860 mm</td><td>Kapinos 35 mm poniżej styku uszczelki</td></tr>
+      <tr><td>Kasety dachu</td><td>872</td><td>1200 mm</td><td>6 niezależnych ram 455×328 mm, profil Alu 30×30×1,5 klejony 2K z PIR i Dibondem. Narożniki na kątownikach Alu 120° (śruby M6 w nitonakrętkach)</td></tr>
+      <tr><td>Sufit</td><td>1188</td><td>1240 mm</td><td>Dibond 2 mm wklejony 2K PU z płytą PIR 50 mm, oparty na wklejanych listwach Alu L 25×25×2. Płyta pełna, bez otworu</td></tr>
+      <tr><td>Szczyt kapelusza</td><td>1364</td><td>1388 mm</td><td>Piasta Ø140×4 + tulejka 4 mm (Z = 1336–1348, H=12). 6× płaskownik 30×4, końce odgięte 11°. Kapelusz Ø196</td></tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<section id="materialy">
+  <h2>Materiały</h2>
+  <div class="scroll">
+  <table>
+    <thead><tr><th>Grupa</th><th>Materiał</th><th>Wymiary</th><th>Zastosowanie</th></tr></thead>
+    <tbody>
+      <tr><td>Stal S235JR</td><td>Podkład epoksydowy i poliuretan</td><td>Profil 60×40×3, 3 szt. Rura Ø114,3×4, L = 350 mm. Blacha Ø200×10 i Ø140×12. Ceownik Π 220×25×5, 3×420 mm. Blacha 100×100×6, 3 szt. Kątownik stopy L 65×85×6 z żebrami</td><td>Gwiazda słupa, kolumna, poszerzone stopy obudowy</td></tr>
+      <tr><td>Aluminium AW-6060 / 6063 T6</td><td>Anoda lub lakier proszkowy</td><td>Baza: profil 30×30×3, zastrzał L 30×30×4. Dach: kasety 30×30×1,5, wsporniki 25×25×2, półki L 25×25×2, kątowniki 120° Alu 3 mm, 6× płaskownik 30×4 (końce odgięte 11°), piasta 2×Ø140×4 + tulejka H=4. Dyski Ø124×12. Pręty Ø22</td><td>Sześć ram ścian, przedłużka słupa, lekki pająk dachu</td></tr>
+      <tr><td>INOX A2-70</td><td>Śruby i klamry</td><td>3× M16×140, czop kulisty, plus nakrętki kontrujące. 3× M12×55 stożkowe. 3× M6×35 stożkowe (przedłużka↔kołnierz). M8 i M10 na stopach i zastrzałach. Dach: 24× M6×25 w nitonakrętki kaset, śruby M5 piasty i tropiku, 12× M6 we wsporniki wieńca, 4× M6 rączki zdejmowania. Klamry 120° bazy z blachy 4 mm. 4 klamry dociągowe</td><td>Poziomowanie, kolumna, przedłużka, stopy, zastrzały, skręcenie ścian i dachu</td></tr>
+      <tr><td>Aluminium</td><td>Rączki dachu</td><td>2× uchwyt rurowy Ø22 × 160 mm, wysięg ~50 mm, stopki 36×28</td><td>Zdejmowanie czapy: wyłącznie ściany bez ekranów SE 150° i NW 330°, Z = 1185 mm (górny rygiel)</td></tr>
+      <tr><td>PIR lub XPS</td><td>λ ≤ 0,028 W/(m·K)</td><td>Grubość 50 mm</td><td>Ściany bazy, kliny narożne bazy i kaset dachu, podłoga, ściany dachu, sufit, wpust</td></tr>
+      <tr><td>G10</td><td>Laminat szklano-epoksydowy</td><td>Dysk Ø124×10. Kostki ścian 26×20×17,3 mm, kostki kaset 24×18×17,3 mm</td><td>Przekładka pod przedłużką i dystans okładziny wewnętrznej od profilu</td></tr>
+      <tr><td>Armaflex i EPDM</td><td>Kauczuk</td><td>Otulina 19 mm na rurę Ø114,3 (Ø zewn. 152,3). Kołnierz 3–6 mm w otworze podłogi. Uszczelka komorowa 20×15. Taśma 15×2 i 4 mm na czołach słupków</td><td>Kolumna, dylatacja podłogi, narożniki ścian bazy i kaset dachu, styk dachu, poszycie Dibond</td></tr>
+      <tr><td>Dibond</td><td>Biały RAL 9016</td><td>3 mm: tylko poszycie zewnętrzne bazy (6 ścian 503,5×675 mm). 2 mm: cały dach (kasety wewnątrz + fartuch, sufit, tropik, kapelusz) oraz 2 ekrany S i SW</td><td>Poszycie bazy 3 mm; dach i ekrany konsekwentnie 2 mm</td></tr>
+      <tr><td>Tulejki dystansowe</td><td>PA6 lub PTFE, białe</td><td>Ø20 × 24 mm, otwór pod M6. łącznie 29 szt. (17 baza + 12 dach; na S bez X=0/Z=770)</td><td>Ekrany S/SW: M6 przelotowa; uniknąć kolizji z wentylatorem na S</td></tr>
+      <tr><td>Kleje strukturalne 2K</td><td>Epoksyd / MMA 2K oraz Poliuretan (PU) 2K</td><td>Kartusze 2K</td><td>Wklejenie kątowników L 25×25×2, wsporników, kostek G10 i profili Alu kaset z Dibondem (MMA/epoksyd 2K); całopowierzchniowe klejenie płyt warstwowych PIR z Dibondem i blachą Al podłogi oraz płytki pod akumulator (PU 2K)</td></tr>
+      <tr><td>Sklejka brzozowa</td><td>Wodoodporna, lakier jachtowy poliuretanowy</td><td>12 mm ściany bazy</td><td>Okładzina wewnętrzna komory bazy</td></tr>
+      <tr><td>Aluminium AW-5083 / 5754</td><td>Blacha podłogowa</td><td>5 mm, sześciokąt R = 465,4 mm, dwie połówki</td><td>Podłoga nośna na ryglu dolnym — 1× LiFePO4 100 Ah (~12 kg) bez ugięć</td></tr>
+      <tr><td>LiFePO4</td><td>Akumulator 12,8 V 100 Ah</td><td>Obudowa DIN L3/H6 278×175×190 mm, ~12 kg, BMS self-heating + Bluetooth</td><td>Jeden pakiet na podłodze S; jeden BMS — pewne wybudzenie grzania zimą</td></tr>
+      <tr><td>Balast</td><td>Płyta chodnikowa</td><td>6× 300×300×50 mm, około 10,5 kg/szt.</td><td>3 na ceownikach (Z = 25–75), 3 na ramionach (Z = 120–170)</td></tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<section id="sprzet">
+  <h2>Sprzęt na czopie</h2>
+  <div class="scroll">
+  <table>
+    <thead><tr><th>Element</th><th>Wymiary</th><th>Masa</th></tr></thead>
+    <tbody>
+      <tr><td>ZWO AM3</td><td>Podstawa Ø122×64. RA Ø60. DEC Ø90×94. Siodełko 38×125</td><td>3,9 kg</td></tr>
+      <tr><td>William Optics RedCat 61 WIFD</td><td>Tubus 365 mm, odrośnik Ø92, szyna Vixen 210 mm</td><td>3,4 kg z obejmami</td></tr>
+      <tr><td>ZWO EFW 5×2"</td><td>Obwiednia 177,5×167×30. Tarcza Ø150,8. Grubość optyczna 20 mm</td><td></td></tr>
+      <tr><td>ZWO ASI2600MC Pro</td><td>Ø90×97. Zasilanie 12 V, do 3 A, osobny przewód</td><td>0,7 kg</td></tr>
+      <tr><td>Guider</td><td>Lunetka Ø34,5–44, długość 123–145 mm. ASI120MM Mini Ø36×61, zasilanie z USB</td><td></td></tr>
+      <tr><td>AstroLink 4 Pi NVMe</td><td>120×95×38. Obwód 230 V, przy zasilaczu astro</td><td>0,3 kg</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p>Pozycja park: tubus poziomo, najwyższy punkt Z ≤ 1148 mm, 40 mm pod Dibondem sufitu (spód Z = 1188 mm). Pozycja home: oś optyczna 52° na biegun. Dach składać wyłącznie w parku.</p>
+</section>
+
+<section id="slupek">
+  <h2>Słupek</h2>
+  <figure>
+    <iframe src="./modele/slupek.html" title="Model słupka z montażem AM3"></iframe>
+    <figcaption><a href="./modele/slupek.html" target="_blank" rel="noopener">Otwórz sam widok</a></figcaption>
+  </figure>
+  <h3>Gwiazda i stopki</h3>
+  <ul>
+    <li>3 ramiona S235 60×40×3, co 120°, kąty 0° / 120° / 240°, zasięg R = 500 mm. Po wypoziomowaniu spód profilu Z = 80 mm, góra Z = 120 mm. Prześwit nad płytą obudowy (Z = 75 mm) wynosi 5 mm.</li>
+    <li>Rdzeń spawany. Płyta górna Ø200×10, Z = 120–130 mm.</li>
+    <li>Stopka: tuleja Ø26×40 z gwintem M16, oś na R = 470 mm. Śruba INOX M16×140 na wylot. Łeb pod klucz 24 mm na Z = 140–150 mm. Nakrętka kontrująca z podkładką na Z = 120–131 mm.</li>
+    <li>Dół śruby: czop kulisty R = 8 mm na Z = 9 mm, w talerzyku 100×100×6, Z = 0–6 mm. Talerzyk zostaje na gumie przy kręceniu śrubą. Poziomowanie od góry.</li>
+    <li>Balast: płyta 300×300×50 na każdym ramieniu, R = 135–435 mm (środek R = 285 mm), Z = 120–170 mm. Krawędź wewnętrzna za otuliną (R = 76,15 mm). Krawędź zewnętrzna 20 mm przed nakrętką M16 (nakrętka na R = 455 mm).</li>
+  </ul>
+  <h3>Kolumna i przedłużka</h3>
+  <ul>
+    <li>Rura Ø114,3×4, L = 350 mm, Z = 130–480 mm. Mocowanie od spodu: 3× M12×55 stożkowe, okrąg Ø164 mm (R = 82 mm).</li>
+    <li>Wypełnienie rury: suchy piasek kwarcowy w szczelnym worku do Z = 290 mm, od góry poduszka PUR 60 mm.</li>
+    <li>Otulina Armaflex 19 mm na zewnętrznej powierzchni rury. Ø zewn. otuliny 152,3 mm.</li>
+    <li>Kołnierz Ø140×12, Z = 480–492 mm, przyspawany. Trzy otwory M6 co 120° na okręgu Ø60 mm (R = 30 mm). Bez otworu centralnego.</li>
+    <li>Przekładka G10 Ø124×10, Z = 492–502 mm, trzy otwory Ø6,4 mm na okręgu Ø60 mm.</li>
+    <li>Przedłużka jest modelem kupionym: <a href="https://pl.aliexpress.com/item/1005008956890200.html">AliExpress 1005008956890200</a>. W modelu stoi na Z = 502–910 mm, wysokość 408 mm. Dysk dolny Ø124×12 (Z = 502–514). Sześć prętów Ø22×369 na okręgu R = 40 mm (Z = 514–883). Dysk górny Ø124×12 (Z = 883–895). Czop Ø60×15, góra na Z = 910 mm.</li>
+    <li>Ściągnięcie: 3× M6×35 stożkowe, od góry, przez dysk 12 mm i G10 10 mm, w gwint kołnierza (ok. 13 mm gwintu w stali Ø140×12; M6×25 było za krótkie).</li>
+  </ul>
+</section>
+
+<section id="obudowa">
+  <h2>Obudowa</h2>
+  <p>R zewn. = 500,0 mm, bok = 500,0 mm. Apotema zewnętrzna aluminium 433,0 mm. Apotema sklejki wewnętrznej 371,0 mm (światło ścian przeciwległych 742,0 mm, przekątna narożników 856,8 mm). Osprzęt na ścianie odmierzać od apotemy 371 mm.</p>
+  <figure>
+    <iframe src="./modele/obudowa.html" title="Model obudowy heksagonalnej"></iframe>
+    <figcaption>Przycisk „Rozsuń ściany” rozsuwa warstwy: ekran z dystansami na zewnątrz, dibond, ramę ze śrubami głębiej, izolację bliżej środka. <a href="./modele/obudowa.html" target="_blank" rel="noopener">Otwórz sam widok</a></figcaption>
+  </figure>
+  <p>Każda ściana jest osobną ramą 455 mm. Ma jedną długą nogę na stopie balastowej i jeden krótki słupek zawieszony na Z = 185 mm nad ramieniem słupa. Ściany 30°, 150° i 270° mają długą nogę po lewej (X = −212,5 mm). Ściany 90°, 210° i 330° mają ją po prawej (X = +212,5 mm). W wierzchołku stopy schodzą się dwie długie nogi, w wierzchołku nad słupem dwa krótkie słupki.</p>
+  <div class="scroll">
+  <table>
+    <thead><tr><th>Ściana</th><th>Długa noga, Z = 25–860</th><th>Krótki słupek, Z = 185–860</th></tr></thead>
+    <tbody>
+      <tr><td>30°</td><td>lewa, stopa 60°</td><td>prawa, nad ramieniem 0°</td></tr>
+      <tr><td>90°</td><td>prawa, stopa 60°</td><td>lewa, nad ramieniem 120°</td></tr>
+      <tr><td>150°</td><td>lewa, stopa 180°</td><td>prawa, nad ramieniem 120°</td></tr>
+      <tr><td>210°</td><td>prawa, stopa 180°</td><td>lewa, nad ramieniem 240°</td></tr>
+      <tr><td>270°</td><td>lewa, stopa 300°</td><td>prawa, nad ramieniem 240°</td></tr>
+      <tr><td>330°</td><td>prawa, stopa 300°</td><td>lewa, nad ramieniem 0°</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <h3>Stopy, ramiaki, kaseton</h3>
+  <ul>
+    <li>Ceownik Π 220×25×5, L = 420 mm, półkami w dół, kąty 60° / 180° / 300°. Oś wzdłuż promienia, środek R = 330 mm. Grzbiet na Z = 25 mm. Szerokość 220 mm łapie obie długie nogi sąsiednich ścian. Na grzbiecie płyta 300×300×50 (środek R = 285 mm, Z = 25–75 mm).</li>
+    <li>Każda długa noga jest ujęta w kątownik L 65×85×6 z dwoma trapezowymi żebrami. Dwie śruby M8×45 przechodzą poziomo przez nogę (Z = 51 mm i Z = 81 mm). Dolna półka jest przykręcona do ceownika dwiema śrubami M10. Bez spawania.</li>
+    <li>Zastrzał: kątownik L 30×30×4, jeden na ścianę. Start na wewnętrznej ściance długiej nogi, Z = 52 mm. Koniec pod spodem rygla dolnego, 265 mm od nogi, czyli 2/3 rozpiętości rygla (395 mm). Dolne czoło ścięte pionowo (około 63° do osi), górne poziomo (około 27° do osi). W obu węzłach pięciokątna blacha 4 mm i śruby M8.</li>
+    <li>Rygiel dolny Z = 185–215 i rygiel górny Z = 830–860, oba L = 395 mm, między wewnętrznymi ściankami słupków. Krótki słupek schodzi się z ryglem. W świetle ramy nie ma dodatkowej płytki.</li>
+    <li>Klamry 120°: na stopie (60°, 180°, 300°) na Z = 115, 225, 520 i 795 mm. Nad ramieniem słupa (0°, 120°, 240°) na Z = 225, 520 i 795 mm. Skrzydło klamry 6×48×46 mm, dwie śruby M8 na poziom.</li>
+    <li>Kaseton od zewnątrz: Dibond 3 mm, Z = 185–860, arkusz 503,5×675, taśma EPDM 15×2. PIR w pasie profilu, Z = 215–830, R = 500–465,4 mm. PIR ciągły R = 465,4–442,3 mm i sklejka 12 mm, oba Z = 277–830. Kostki G10 26×20×17,3 mm, dziewięć na ścianę: X = −150, 0, +150 mm oraz Z = 300, 490, 685 mm.</li>
+    <li>Szczelina narożna, Z = 277–860. Czoła sąsiednich słupków 30×30 schodzą się pod 120° i zostaje między nimi klin: 9 mm od strony komory, 39 mm przy poszyciu. Płyty kończą się na słupkach, więc bez wypełnienia narożnik łączy zewnątrz z komorą. W każdym z sześciu narożników: taśma EPDM 4 mm na obu czołach słupków na pełną wysokość (dociskają ją klamry), klin PIR od lica sklejki do poszycia zachodzący na krawędzie płyt, oraz ścieg EPDM w styku Dibondu na narożniku. Klin PIR dzielić na odcinki między poziomami klamer (Z = 225 / 520 / 795 mm) i podcinać pod skrzydełka oraz nakrętki M8 — ciągły klin na pełną wysokość nie wejdzie.</li>
+  </ul>
+  <h3>Podłoga</h3>
+  <ul>
+    <li>Podział wzdłuż Y = 0 na połówkę północną i południową. Kłaść po ustawieniu skorupy wokół słupa.</li>
+    <li>Blacha aluminiowa AW-5083 (lub 5754) 5 mm, Z = 215–220, sześciokąt R = 465,4 mm, apotema 403,0 mm. Leży na ryglu dolnym. Zastępuje sklejkę: akumulator LiFePO4 100 Ah (~12 kg) i MPPT nie uginają płyty.</li>
+    <li>PIR 57 mm, Z = 220–277, sześciokąt R = 442,3 mm, apotema 383,0 mm. Powierzchnia użytkowa Z = 277 mm. Pod akumulatorem blacha rozkładająca nacisk 290×185×2 mm, klejona do PIR klejem poliuretanowym (bez śrub przez podłogę — uniknąć mostka termicznego pod baterią).</li>
+    <li>Otwór centralny Ø158,4 mm (R = 79,2 mm). Otulina słupa Ø152,3 mm. Luz promieniowy 3 mm wypełnić kołnierzem Armaflex.</li>
+    <li>Drenaż kondensatu: w najniższych punktach blachy Al (połówki N i S) po jednym otworze Ø8 mm z siatką przeciw owadom. Krawędzie PIR uszczelnić butyl/silikonem, żeby woda nie wchodziła pod płyty.</li>
+  </ul>
+  <h3>Ekrany słoneczne</h3>
+  <ul>
+    <li>Dwa arkusze białego Dibondu <strong>2 mm</strong>, wyłącznie ściany <strong>S (270°)</strong> i <strong>SW (210°)</strong> — na pozostałych ścianach ekranów nie ma.</li>
+    <li>Dystans: tulejki białe <strong>PA6/PTFE Ø20 × 24 mm</strong> + śruby <strong>M6 przelotowe</strong> (przez ekran, tulejkę i Dibond/profil). Baza: 17 szt. (na S bez punktu X=0, Z=770 — kolizja z wentylatorem) + SW 9 szt.; dach: 12 szt. → łącznie 29.</li>
+    <li>Część na bazie: Z = 185–820 mm. Lico ekranu R ≈ 529–531 mm (24 mm od Dibondu bazy 3 mm).</li>
+    <li>Przedłużenie na czapie: Z = 860–1200 mm. Od fartuchu też 24 mm (R ≈ 535–537 mm).</li>
+    <li>Osie X = −210, 0, +210 mm; baza Z = 210 / 490 / 770 mm (na S środek X=0 tylko Z = 210 i 490); dach Z = 930 / 1100 mm.</li>
+  </ul>
+</section>
+
+<section id="dach">
+  <h2>Dach</h2>
+  <p>Czapa stawiana na uszczelce EPDM i spinana z bazą czterema klamrami. Cały dach w Dibondzie <strong>2 mm</strong>. Kasety klejone 2K, narożniki Alu 120° / M6. Pająk: płaskowniki 30×4 z końcami odgiętymi 11°. Rączki wyłącznie na ścianach <strong>bez ekranów: SE 150° i NW 330°</strong> (ekrany są tylko na 210°/270°), Z = 1185 mm. Masa ≈ <strong>21,3 kg</strong> (bez ekranów dachu ≈ 20,2 kg).</p>
+  <div class="scroll">
+  <table>
+    <thead><tr><th>Grupa</th><th>Masa</th><th>Skład</th></tr></thead>
+    <tbody>
+      <tr><td>Aluminium konstrukcyjne</td><td>6,35 kg</td><td>Ramy 30×30×1,5: 8,68 m × 0,46 kg/m = 4,0; płaskowniki 30×4 ×6: 3,0 m × 0,32 = 0,96; tarcze Ø140×4 ×2 = 0,30; półki L 25×25×2 ×6: 2,5 m × 0,26 = 0,65; 12 wsporników + kątowniki ≈ 0,45</td></tr>
+      <tr><td>Dibond 2 mm</td><td>10,3 kg</td><td>Fartuch 3,4; tropik 1,9; wewn. kaset 2,5; ekrany dachu 1,1; sufit 1,4; kapelusz 0,1 (≈ 2,53 kg/m²)</td></tr>
+      <tr><td>PIR / G10 / EPDM</td><td>2,9 kg</td><td>PIR ρ = 32 kg/m³: ściany ~0,042 m³ → 1,35; sufit ~0,028 m³ → 0,88; + 36× G10 + EPDM ≈ 2,9</td></tr>
+      <tr><td>Okucia i klej</td><td>1,7 kg</td><td>M6/M5, nitonakrętki, 4 klamry, 2 rączki Alu, tulejki PA6+M6 ekranów, kleje 2K</td></tr>
+      <tr><td><strong>Razem czapa</strong></td><td><strong>21,3 kg</strong></td><td>Wcześniejsze 7,0 / 4,3 kg Al i PIR były zawyżone (~+2 kg). Profil 20×20×1,5 lub 25×25×1,5 obniżyłby Al poniżej ~4,8 kg</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <figure>
+    <iframe src="./modele/dach.html" title="Model dachu z tropikiem"></iframe>
+    <figcaption>Przycisk „Rozsuń dach” odsuwa sześć kaset, unosi wkład sufitowy i pająk. <a href="./modele/dach.html" target="_blank" rel="noopener">Otwórz sam widok</a></figcaption>
+  </figure>
+  <h3>Złącze na Z = 860 mm</h3>
+  <ul>
+    <li>Uszczelka komorowa EPDM 20×15 na wieńcu bazy. Po dociśnięciu klamrami wysokość 12 mm, Z = 860–872.</li>
+    <li>Fartuch Dibond 2 mm: R = 511 mm, dół na Z = 825 mm (35 mm poniżej styku). Luz obwodowy względem bazy 3 mm.</li>
+    <li>Wpust PIR od wewnątrz: R = 442,3–465,4 mm, wysunięcie 15 mm w dół, Z = 845–860.</li>
+  </ul>
+  <h3>Sześć kaset ściennych</h3>
+  <ul>
+    <li>Każda kaseta to płaska rama prostokątna 455 × 328 mm z profilu Alu 30×30×1,5, Z = 872–1200, klejona strukturalnie 2K w warsztacie. Rygiel dolny i górny, L = 455 mm. Dwa własne słupki, H = 268 mm, w osiach X = ±212,5 mm. Śruby M6 w nitonakrętkach spinające sąsiadów: po dwie na słupek, Z = 947 mm i Z = 1125 mm.</li>
+    <li>Sąsiednie ramy stykają się krawędziami. W każdym z sześciu narożników od wewnątrz wchodzi kątownik gięty 120° z blachy Alu 3 mm, skrzydło 3×46×46 mm, na Z = 945 mm i Z = 1125 mm. Ramy skręca się przez niego śrubami M6.</li>
+    <li>Klin między słupkami sąsiednich kaset, Z = 902–1188. Czoła profili 30×30 zostawiają około 9 mm od strony komory i około 39 mm przy fartuchu. W każdym narożniku: taśma EPDM 4 mm na obu czołach słupków (Z = 902–1170, dociska ją klamra), klin PIR od lica Dibondu wewnętrznego do fartucha (R = 440,3–511 mm) i ścieg EPDM w styku fartuchów. Klin dochodzi do spodu sufitu.</li>
+    <li>Wypełnienie kasety: PIR 50 mm między ryglami (Z = 902–1170), Dibond 2 mm od wewnątrz (Z = 865–1188, R = 442,26–440,26 mm), fartuch Dibond 2 mm, kostki G10 24×18×17,3 mm. Sześć na kasetę: X = −150, 0, +150 mm oraz Z = 890 i 1150 mm. Klejenie 2K PU/MMA.</li>
+    <li>Półka oporowa: kątownik Alu L 25×25×2 mm wklejony 2K do wewnętrznej ścianki górnego rygla. Półka na Z = 1188. To jedyna listwa w świetle ramy kasety.</li>
+    <li>Na górnym ryglu każdej ramy dwa lekkie wsporniki z profilu Alu 25×25×2 mm, stopa 44×3×28 mm, razem 12 sztuk, wysokość 46 mm (Z = 1200–1246), osie X = ±195 mm — wklejane 2K i nitowane. Na nich siadają żebra.</li>
+  </ul>
+  <h3>Sufit</h3>
+  <ul>
+    <li>Dibond 2 mm, Z = 1188–1190, sklejony całopowierzchniowo klejem 2K PU z płytą PIR 50 mm, Z = 1190–1240. Obrys R = 461,4 mm, tak aby płyta weszła w światło profili. Płyta pełna, bez otworu.</li>
+    <li>Płyta schodzi od góry na sześć półek L 25×25. Spód Dibondu Z = 1188 mm: przy tubusie w parku (Z ≤ 1148 mm) zostaje 40 mm.</li>
+  </ul>
+  <h3>Pająk i tropik</h3>
+  <ul>
+    <li>Piasta: dwie tarcze Alu Ø140×4 mm (otwór Ø60) + tulejka dystansowa H = <strong>4 mm</strong> (= grubość płaskownika), łącznie Z = 1336–1348 (4+4+4). Bez spawania.</li>
+    <li>Sześć żeber z płaskownika Alu 30×4 mm na płasko. Górne końce na odcinku <strong>35 mm</strong> odgiąć o kąt <strong>11°</strong> do poziomu, tak aby weszły płasko między tarcze piasty (styk całą płaszczyzną, nie krawędzią). Na okapie R = 536 mm → Z ≈ 1248.</li>
+    <li>Dwa żebra 0°–180°: wklejone 2K i przynitowane między tarczami w warsztacie (początek R ≈ 34 mm).</li>
+    <li>Cztery pozostałe: wsuwane między tarcze na dachu, M5 od góry (początek R ≈ 38 mm).</li>
+    <li>Poprzeczka Alu 26×4 mm nad wspornikami wieńca łapie wsporniki sąsiednich kaset (osie X = ±195 mm na ryglu). Dwie śruby M6 na żebro.</li>
+    <li>Szczelina między wieńcem ścian (Z = 1200) a oparciem żebra, osłonięta siatką o wysokości 28 mm.</li>
+    <li>6 płatów Dibond 2 mm nad górną płaszczyzną żeber. Okap na Z = 1259 mm, otwór przy piaście na Z = 1364 mm. Śruby M5 z podkładkami EPDM (lub wklejenie 2K, jeśli okno pozwala wynieść zmontowany tropik).</li>
+    <li>Kapelusz stożkowy Ø196 mm z Dibondu 2 mm na trzech wspornikach Ø7×24 mm, R = 58 mm. Szczyt Z = 1388 mm.</li>
+  </ul>
+  <h3>Montaż dachu w terenie</h3>
+  <ol>
+    <li>Ustawić sześć kaset (prefabrykaty klejone 2K) na uszczelce EPDM w sześciokąt. W klin każdego narożnika włożyć PIR i taśmy EPDM na czoła słupków, potem skręcić kątownikiem Alu 120°. 24 śruby M6×25 Inox w nitonakrętki, po dwie na słupek.</li>
+    <li>Od góry włożyć pełną płytę: Dibond 2 mm z przyklejonym 2K PU PIR 50 mm, bez otworu, na półki L 25×25.</li>
+    <li>Nasunąć piastę (tarcze + tulejka) z dwoma żebrami wklejonymi w warsztacie. Wsunąć cztery pozostałe płaskowniki między tarcze i skręcić M5. Wszystkie sześć przykręcić do wsporników wieńca, 12 śrub M6.</li>
+    <li>Przykręcić 6 trójkątnych płyt Dibond do żeber (M5 + EPDM) i założyć kapelusz kominka.</li>
+    <li>Czapa ≈ 21,3 kg. Zdjąć za rączki SE/NW (patrz niżej).</li>
+  </ol>
+  <h3>Rączki do zdejmowania</h3>
+  <ul>
+    <li>Wyłącznie ściany <strong>bez ekranów</strong>: <strong>SE 150°</strong> i <strong>NW 330°</strong>. Ekrany są tylko na 210° i 270° — rączek tam nie montować. 150°/330° to jedyna przeciwległa para wolna od ekranów.</li>
+    <li>Środek chwytu Z = <strong>1185 mm</strong> (górny rygiel kasety 1170–1200). Rozstaw stopek ±70 mm, chwyt Ø22 × 160 mm, wysięg ~50 mm.</li>
+    <li>Mocowanie: śruby M6 przez fartuch <strong>prosto w nitonakrętki w profilu górnego rygla</strong> 30×30×1,5 — nie w sam Dibond (uniknąć wyrwania z cienkiej okładziny).</li>
+  </ul>
+  <h3>Klamry dociągowe dach ↔ baza</h3>
+  <ul>
+    <li>Cztery klamry dwuczęściowe na ścianach 30°, 90°, 150° i 330°. Montaż od zewnątrz, po założeniu poszycia. W świetle ramy nie ma rygla. Nie są częścią widoku konstrukcji aluminiowej.</li>
+    <li>Dół (baza): zaczep na zewnętrznym Dibondzie, poniżej kapinosu fartucha (styk widoczny Z = 825 mm). Luz 4 mm pod krawędzią fartucha: górna krawędź poprzeczki na Z = 821 mm (środek Z = 817 mm). Płytka 56×36×4 mm na licu poszycia, środek Z ≈ 801 mm. Dwie śruby przez poszycie w rygiel górny bazy / nitonakrętki.</li>
+    <li>Góra (dach): korpus z dźwignią przykręcony przez fartuch do dolnego rygla kasety (profil Z = 872–902, środek korpusu Z = 887 mm). Pałąk schodzi poniżej kapinosu i łapie poprzeczkę na Z ≈ 817 mm, dociągając czapę na EPDM.</li>
+    <li>Kolejność: poszycie bazy → zaczepy poniżej kapinosu → dach na uszczelce → korpusy na dolnych ryglach kaset → zatrzaśnięcie czterech dźwigni.</li>
+  </ul>
+</section>
+
+<section id="konstrukcja">
+  <h2>Konstrukcja aluminiowa</h2>
+  <p>Sam szkielet bazy i dachu, po złożeniu opisów ścian i czapy. Bez balastu, poszycia, izolacji i wyposażenia. Lista po lewej przybliża węzeł i przygasza resztę. Wymiary węzłów są w sekcjach Obudowa i Dach.</p>
+  <figure>
+    <iframe src="./modele/konstrukcja.html" title="Konstrukcja aluminiowa dachu i obudowy"></iframe>
+    <figcaption>Detale: stopa, zastrzał, krótki słupek, klamra bazy, kaseta, półka sufitu, słupek pod żebro, klamra kasety, żebro spawane, żebro skręcane, mocowanie do słupków. Klamry dociągowe dach↔baza tylko na poszyciu (sekcja Dach), poza tym widokiem. <a href="./modele/konstrukcja.html" target="_blank" rel="noopener">Otwórz sam widok</a></figcaption>
+  </figure>
+  <ul>
+    <li>Obudowa: sześć ram 455 mm, trzy ceowniki, sześć zastrzałów i klamry 120°. W świetle ramy zostaje sam profil.</li>
+    <li>Dach: sześć kaset 455×328 mm (profil 30×30×1,5), półki L 25×25 pod sufit, dwanaście wsporników 25×25, piasta z dwóch tarcz Ø140×4, dwa żebra wklejane i cztery wsuwane z płaskownika 30×4 na płasko.</li>
+    <li>Przyciski „Obudowa” i „Dach” gaszą jedną z brył. „Rozsuń” odsuwa ramy. „Okucia” gasi śruby i klamry.</li>
+  </ul>
+</section>
+
+<section id="elektronika">
+  <h2>Elektronika</h2>
+  <p>Dwa obwody. Sieć 230 V jest zapasem awaryjnym. Nominalnie klimat i sesje astro jadą z magazynu LiFePO4 ładowanego z zewnętrznego panelu bifacial 450 W przez Victron SmartSolar MPPT 100/30. <strong>Mikroklimat i sesja się wykluczają:</strong> przy otwartym dachu grzałki i wentylator są wyłączone — w komorze nie ma zamkniętej objętości do ogrzewania. Pi zostaje w czuwaniu (1,5 W) do momentu zamknięcia dachu.</p>
+  <figure>
+    <iframe src="./modele/elektronika.html" title="Model elektryki w obudowie"></iframe>
+    <figcaption>Pomarańczowa skrzynka to Victron SmartSolar MPPT 100/30. Zielony blok na południu to LiFePO4 12,8 V 100 Ah. <a href="./modele/elektronika.html" target="_blank" rel="noopener">Otwórz sam widok</a></figcaption>
+  </figure>
+  <h3>Obwód 230 V</h3>
+  <ul>
+    <li>Talerz Ubiquiti U7-Pro-XG, Ø206 × 32,5 mm, centralnie na licu północnym. Środek X = 0, Z = 545 mm, dystans 8 mm od Dibondu.</li>
+    <li>Okap z Dibondu nad talerzem, też w osi X = 0. Połać 100 mm pod 60° do poziomu, szerokość 280 mm. Górna krawędź na ścianie, Z = 757 mm. Wysięg 50 mm, spadek 87 mm.</li>
+    <li>Hak pod okapem, X = 0. Na nim wisi zwój kabla sieciowego około 1,5 m. Wtyczkę zakłada się po przeciągnięciu kabla przez otwór; na czas sesji wpina się ją w przedłużacz tylko jako awarię.</li>
+    <li>Trzy otwory w kasetonie pod talerzem: Ø16 mm na X = −28 mm, Z = 414 mm (kabel 230 V); Ø12 mm na X = +28 mm, Z = 414 mm (Ethernet); Ø16 mm na X = 0, Z = 388 mm (para PV od zewnętrznego panelu 450 W). W każdym: dławik PG/M20 IP68 ze śrubowym odciążeniem + tuleja osłonowa przez PIR (wklejona), nie sam wykrój w EPDM. Przez otwór idzie sam kabel; wtyczki i konektory MC4 zakłada się po przeciągnięciu.</li>
+    <li>Kabel Ethernet około 40 cm przeciągnięty przez Ø12 do wtryskiwacza PoE w komorze: X = −130 mm, Y = +335 mm, Z = 500 mm, obok rozdzielnicy. RJ45 montuje się po przeciągnięciu. U7-Pro-XG załączać tylko na czas sesji i zgrywania klatek (~12–15 W PoE), zasilany z szyny 12 V przez wtryskiwacz albo z 230 V awaryjnie.</li>
+    <li>Przepust do rozdzielnicy na wewnętrznej stronie tej samej ściany: X = 0, Y = +316 mm, Z = 465–655 mm. Zabezpieczenie nadprądowe i różnicówka 30 mA typu A. Druga różnicówka przy gnieździe w domu. Przewód z żyłą PE, w peszlu.</li>
+    <li>Dwa zasilacze 12 V w obudowie szczelnej, X = +155 mm, obok rozdzielnicy — tylko awaria / sieć. Nominalnie AM3, ASI2600MC Pro, AstroLink, EFW i odrośnik biorą zasilanie z magazynu przez przetwornicę DC/DC buck-boost (~13,2 V / 10 A) przed AstroLinkiem — szyna LiFePO4 waha się ~12,0–14,6 V; AM3 i Peltier ASI są wrażliwe na spadek poniżej 12,0 V.</li>
+  </ul>
+  <h3>Obwód akumulatora i PV</h3>
+  <ul>
+    <li>Jeden akumulator LiFePO4 12,8 V 100 Ah z BMS self-heating i Bluetooth: 1280 Wh znamionowo, ~1150 Wh przy 90% DoD. Obudowa DIN L3/H6 278×175×190 mm, ~12 kg. Środek na podłodze południowej: X = 0, Y = −230 mm; dłuższy bok wschód–zachód. Dno na Z = 279 mm (podkładka Al 290×185×2 mm). Luz od otuliny słupa ≈ 66 mm, od ściany S ≈ 65 mm. Jeden BMS — cały prąd z MPPT trafia w self-heating (próg wybudzenia nie dzieli się na gałęzie).</li>
+    <li>Victron SmartSolar MPPT 100/30, obudowa 130×186×70 mm, ściana północna: X = −110 mm, Y = +331 mm, środek Z = 400 mm (na zachód od rozdzielnicy). Wejście PV z przepustu Ø16; wyjście na zaciski akumulatora. Przy 12 V model 100/30 oddaje do ~440 W — dobrany do panelu 450 W (lekki overpanel ~2%, dopuszczalny). V<sub>oc</sub> panelu ~40–45 V (zimą do ~50 V) — zapas względem limitu 100 V. Regulator 75/15 odpada (max ~216 W).</li>
+    <li>Pi klimatu, klasa Zero 2 W, około 1–1,5 W. Ściana SE: X = +345 mm, Y = −89 mm, Z = 500 mm. Przy otwartym dachu nie steruje grzałkami ani wentylatorem.</li>
+    <li>BME280 na ścianie SE: X = +251 mm, Y = −260 mm, Z = 560 mm (punkt rosy / wilgotność). Przekaźnik przy Pi, Z = 548 mm — styki grzałek i wentylatora rozwarte na czas sesji.</li>
+    <li>Czujnik temperatury grzałek (np. DS18B20) na obudowie akumulatora (Y ≈ −230 mm, Z ≈ 300–370 mm) — nie na BME280 pod sufitem (ciepłe powietrze wyłączałoby grzałki przy wciąż zimnych ogniwach).</li>
+    <li>Dwie grzałki 12 V, po 15 W: ściana północna 90° (X = 0, Y = +358 mm) i południowo-zachodnia 210° (X = −310 mm, Y = −179 mm), obie Z = 290–430 mm. Pracują wyłącznie przy zamkniętym dachu (załączenie +2 °C, wyłączenie +5 °C na czujniku dolnym). Przy otwartym dachu wyłączone sprzętowo i programowo.</li>
+    <li>Wentylator ≈ 1 W, ściana południowa: X = 0, Y = −404 mm, Z = 690–810 mm. Cyrkulacja wewnętrzna (destratyfikacja nad grzałkami); przy przewietrzaniu: żaluzja grawitacyjna na zewnątrz + dolny wlot z filtrem. Zimą przy grzaniu tylko cyrkulacja albo pochłaniacz wilgoci w szczelnej komorze.</li>
+    <li>BMS self-heating podgrzewa ogniwa prądem z MPPT przed ładowaniem na mrozie (jeden próg na cały pakiet). Bezpiecznik główny na szynie 12 V + bezpieczniki gałęzi. Przekaźniki rozwarte przy braku zasilania Pi. AstroLink bez USB z Pi klimatu.</li>
+  </ul>
+</section>
+
+<section id="zasilanie">
+  <h2>Zasilanie off-grid (panel bifacial 450 W)</h2>
+  <p>Doładowanie magazynu idzie z zewnętrznego modułu <strong>bifacial 450 W</strong> na wolnostojącym stojaku, kąt 55°–60° na południe, ~52°N. Panel nie należy do bryły obudowy — kabel PV wchodzi trzecim przepustem pod talerzem do Victron SmartSolar MPPT 100/30. Zysk bifacial zimą ok. +12% z odbić od podłoża lub śniegu. Przyjęty uzysk referencyjny po stratach MPPT: <strong>450 Wh/dobę z 1 kWp</strong> w grudniu na 52°N (kąt zimowy), czyli <strong>0,45 Wh/Wp·dobę</strong>; z bifacial ×1,12 → <strong>0,50 Wh/Wp·dobę</strong>.</p>
+
+  <h3>Dlaczego nie 500 W — przeliczenie z wykluczeniem mikroklimatu na sesji</h3>
+  <p>Grzałki i wentylator nie pracują równolegle z zestawem astro. Sesja nie dokłada 360 Wh „na wierzch” całodobowego ogrzewania — tylko zastępuje zamknięty klimat przez ~8 h otwartego dachu.</p>
+  <table>
+    <thead><tr><th>Scenariusz doby</th><th>Skład</th><th>Energia</th></tr></thead>
+    <tbody>
+      <tr><td>Zamknięty dach, monitoring (wiosna–jesień)</td><td>Pi 24 h + wentylator ~6 h</td><td>42 Wh</td></tr>
+      <tr><td>Zamknięty dach, zima łagodna</td><td>42 Wh + grzałki średnio 4 h × 15 W</td><td>102 Wh</td></tr>
+      <tr><td>Zamknięty dach, silny mróz</td><td>42 Wh + 2×15 W × 24 h</td><td>762 Wh</td></tr>
+      <tr><td>Doba z sesją 8 h (dach otwarty)</td><td>Klimat tylko 16 h: Pi 24 Wh + wentylator ~4 Wh + grzałki 60 Wh ≈ 88 Wh; sesja 40 W × 8 h = 320 Wh; U7 opcjonalnie +112 Wh</td><td>408 Wh (520 Wh z U7)</td></tr>
+    </tbody>
+  </table>
+  <ul>
+    <li>Średnia grudniowa przy 3 sesjach/tydzień i pozostałych dniach w klimacie łagodnym: (4×102 + 3×408) / 7 ≈ <strong>233 Wh/dobę</strong> (bez U7 na stałe).</li>
+    <li>Moc panelu na bilans średni: 233 Wh ÷ 0,50 Wh/Wp ≈ <strong>466 Wp</strong>. Z 10% zapasu na brud i starzenie → <strong>~510 Wp</strong> — ale to liczy sesje w najciemniejszym miesiącu jak stały koszt; w praktyce sesje zimowe idą w noce po wyżowych dniach, gdy magazyn jest pełny po dziennym ładowaniu.</li>
+    <li>Kryterium doboru (ważniejsze niż średnia): (1) pokryć klimat łagodny 102 Wh/dobę zimą, (2) po sesji 320–400 Wh odzyskać ładunek w <strong>jednym słonecznym dniu zimowym</strong>, (3) nie przepłacać za moc, której MPPT i tak nie wepchnie w 100 Ah przy krótkim dniu.</li>
+    <li>Na (1): 102 ÷ 0,50 ≈ <strong>204 Wp</strong>. Na (2): słoneczny dzień zimowy daje ~1,6–2,0 Wh/Wp → do odzyskania 400 Wh wystarczy <strong>200–250 Wp</strong>. Magazyn ~1150 Wh i tak trzyma sesję; panel ma przede wszystkim łatać klimat i odbudować SoC po nocy.</li>
+    <li><strong>Optimum: jeden moduł bifacial 450 W.</strong> Grudzień średnio 450×0,50 ≈ <strong>225 Wh/dobę</strong> — ponad dwa razy klimat łagodny (+123 Wh/dobę nadwyżki). Słoneczny dzień: ~720–990 Wh, czyli 1–2 sesje z powrotem na pełny magazyn. 400 W byłoby na styk przy 3 sesjach/tydzień w grudniu; 500 W daje ~11% więcej energii, której przy 100 Ah nie zagospodarujesz zimą szybciej niż w jeden pogodny dzień — zbędny zapas.</li>
+  </ul>
+
+  <h3>Uzysk z panelu 450 W Bifacial</h3>
+  <ul>
+    <li>Grudzień – styczeń: średnio ~225 Wh/dobę (pochmurno 35–65 Wh; mroźny słoneczny dzień ze śniegiem 720–990 Wh).</li>
+    <li>Listopad / luty: średnio ~400–540 Wh/dobę.</li>
+    <li>Marzec – październik: 1100–2250 Wh/dobę.</li>
+  </ul>
+
+  <h3>Autonomia magazynu 100 Ah (~1150 Wh przy 90% DoD)</h3>
+  <ul>
+    <li>Sam monitoring 42 Wh/dobę: ~27 dób bez słońca.</li>
+    <li>Zima łagodna 102 Wh/dobę: ~11 dób. Panel 450 W średnio +123 Wh/dobę nadwyżki.</li>
+    <li>Silny mróz 762 Wh/dobę przy zamkniętym dachu: ~1,5 doby na samym magazynie. Przy otwartym dachu (sesja) grzałki milczą — doba sesyjna to 408 Wh, nie 762 Wh. Silny mróz + wyż zwykle daje 720–990 Wh z panelu na odbudowę.</li>
+    <li>Sesja 8 h (320 Wh) + domknięcie nocy klimatem: magazyn ≥3 takie noce z rzędu bez ładowania; po jednym słonecznym dniu SoC wraca.</li>
+  </ul>
+
+  <h3>Sprzęt zasilania</h3>
+  <ul>
+    <li>Panel: bifacial 450 W, stojak zewnętrzny 55°–60° na południe. Poza bryłą obudowy.</li>
+    <li>Regulator: Victron SmartSolar MPPT 100/30.</li>
+    <li>Magazyn: 1× 12,8 V 100 Ah LiFePO4 (DIN L3/H6), BMS self-heating + Bluetooth.</li>
+    <li>Podłoga nośna: blacha Al 5 mm, opis w sekcji Obudowa → Podłoga.</li>
+  </ul>
+</section>
+
+<section id="montaz">
+  <h2>Montaż</h2>
+  <figure>
+    <iframe src="./modele/zlozenie.html" title="Złożenie słupka, obudowy, dachu i elektryki"></iframe>
+    <figcaption><a href="./modele/zlozenie.html" target="_blank" rel="noopener">Otwórz sam widok</a></figcaption>
+  </figure>
+  <ol>
+    <li>Na tarasie ułożyć płytę XPS i matę gumową o średnicy co najmniej 1100 mm pod obudową. W XPS i macie wyciąć trzy otwory pod talerzyki słupa (V1/V3/V5, 0°/120°/240°), tak aby talerzyki stały na twardym podłożu tarasu przez cienkie krążki elastomeru (np. PU ~90 ShA), nie na ciągłym XPS — inaczej wiatr i kroki przy obudowie przenoszą się na słup. Płaszczyzna Z = 0 to wierzch maty pod ceownikami / wierzch elastomeru pod talerzykami (wypoziomować razem).</li>
+    <li>Postawić gwiazdę słupa. Ramiona na 0° (E), 120° (NW), 240° (SW). Położyć trzy płyty 300×300×50 na ramiona. Kluczem 24 mm ustawić spód profili na Z = 80 mm i skontrować nakrętki M16.</li>
+    <li>Nasunąć skorupę obudowy od góry, bez podłogi. Ceowniki w sektorach 60° (NE), 180° (W), 300° (SE).</li>
+    <li>Wsunąć trzy płyty 300×300×50 na grzbiety ceowników, Z = 25–75 mm. Jedna płyta na stopę.</li>
+    <li>Ułożyć obie połówki podłogi na ramiaku Z = 215 mm. Otwór Ø158,4 mm objąć kołnierzem Armaflex na otulinie Ø152,3 mm.</li>
+    <li>Przykręcić przedłużkę przez G10 trzema śrubami M6×35. Zamontować AM3, RedCat 61, EFW i ASI2600MC Pro.</li>
+    <li>Ustawić montaż w park. Złożyć dach na wieńcu Z = 860 mm według sekcji Dach: kasety, wkład sufitowy, pająk, połacie. Zatrzasnąć cztery klamry.</li>
+    <li>Zamocować okap i talerz Wi-Fi, trzy przepusty (230 V, Ethernet, PV), rozdzielnicę, wtryskiwacz, zasilacze, Victron MPPT 100/30, akumulator LiFePO4 100 Ah na południu podłogi (podkładka Al klejona), Pi, BME280, DS18B20 na obudowie baterii, dwie grzałki i wentylator według współrzędnych z sekcji Elektronika. Kabel PV od stojaka panelu 450 W przeciągnąć przez Ø16 (X = 0) do MPPT. Na czas sesji (dach otwarty) upewnić się, że przekaźniki grzałek i wentylatora są rozwarte.</li>
+  </ol>
+</section>
+
+<section id="cad">
+  <h2>Model CAD</h2>
+  <figure>
+    <iframe src="./modele/cad.html" title="Pełny model CAD"></iframe>
+    <figcaption><a href="./modele/cad.html" target="_blank" rel="noopener">Otwórz sam widok</a></figcaption>
+  </figure>
+</section>
+</main>
+<footer>
+  Wymiary na tej stronie są wymiarami wykonawczymi.
+</footer>
+</body>
+</html>

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Konstrukcja aluminiowa</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #0b0d11; color: #f3f4f6; font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+  #canvas-container { width: 100vw; height: 100vh; position: relative; overflow: hidden; background: radial-gradient(circle at 46% 48%, #181e29 0%, #0b0d11 76%); }
+  #canvas-container canvas { position: absolute !important; inset: 0 !important; width: 100% !important; height: 100% !important; display: block !important; }
+  .bar { position: absolute; z-index: 5; display: flex; flex-wrap: wrap; gap: 6px; pointer-events: none; }
+  .bar.bottom { bottom: 12px; left: 12px; right: 12px; }
+  .btn-ctrl, .detail-btn { pointer-events: auto; border: 1px solid rgba(255,255,255,0.14); background: rgba(30,34,43,0.88); color: #e2e8f0; padding: 6px 11px; border-radius: 8px; font-size: 12px; font-weight: 500; cursor: pointer; text-align: left; }
+  .btn-ctrl:hover, .detail-btn:hover { background: rgba(52,59,74,0.96); }
+  .btn-ctrl.active, .detail-btn.active { background: #0284c7; color: #fff; border-color: #bae6fd; font-weight: 600; }
+  #structure-panel {
+    position: absolute; z-index: 6; top: 12px; left: 12px; width: min(280px, calc(100vw - 24px));
+    max-height: calc(100vh - 78px); overflow: auto; padding: 12px;
+    border: 1px solid rgba(255,255,255,0.12); border-radius: 12px;
+    background: rgba(15, 18, 24, 0.88); backdrop-filter: blur(8px);
+  }
+  #structure-panel h1 { margin: 0 0 6px; font-size: 15px; font-weight: 650; letter-spacing: -0.01em; }
+  #structure-panel h2 { margin: 12px 0 6px; font-size: 11px; font-weight: 650; letter-spacing: 0.04em; text-transform: uppercase; color: #94a3b8; }
+  #structure-note { margin: 0 0 4px; font-size: 12px; line-height: 1.4; color: #cbd5e1; }
+  #structure-details { display: flex; flex-direction: column; gap: 4px; }
+</style>
+</head>
+<body data-part="konstrukcja">
+<div id="canvas-container"></div>
+<aside id="structure-panel">
+  <h1>Konstrukcja aluminiowa</h1>
+  <p id="structure-note">Ramy obudowy i dachu, bez balastu i poszycia.</p>
+  <div id="structure-details"></div>
+</aside>
+<div class="bar bottom">
+  <button onclick="toggleStructurePart('hex')" id="btn-struct-hex" class="btn-ctrl active">Obudowa</button>
+  <button onclick="toggleStructurePart('roof')" id="btn-struct-roof" class="btn-ctrl active">Dach</button>
+  <button onclick="toggleExplodeHexWalls()" id="btn-hex-explode" class="btn-ctrl">Rozsuń ściany</button>
+  <button onclick="toggleExplodeRoof()" id="btn-roof-explode" class="btn-ctrl">Rozsuń dach</button>
+  <button onclick="toggleStructureHardware()" id="btn-struct-hw" class="btn-ctrl active">Okucia</button>
+</div>
+<script src="./_silnik.js"></script>
+</body>
+</html>
