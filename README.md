@@ -9,7 +9,8 @@ Główne wejście: **[budowa.html](budowa.html)** — instrukcja z osadzonymi mo
 Modele ładują Three.js z CDN — wystarczy lokalny serwer HTTP (otwarcie plików przez `file://` zwykle blokuje skrypty).
 
 ```bash
-cd /Users/wdrodze/Public/miniobserwatorium
+git clone https://github.com/tomaszgrabowskiop/miniobserwatorium.git
+cd miniobserwatorium
 python3 -m http.server 8080
 ```
 
