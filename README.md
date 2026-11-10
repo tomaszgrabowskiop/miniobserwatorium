@@ -46,7 +46,3 @@ Potem:
 ## Współrzędne
 
 Środek (0, 0, 0) w osi słupa na gumie. **+Y** północ, **−Y** południe, **+X** wschód, **−X** zachód. Wszystkie rzędne **Z** od gumy. W silniku 3D: `P3(x,y,z) = (x, z, −y)`.
-
-## Uwaga
-
-Źródłem prawdy są `budowa.html` i `modele/_silnik.js`. Starsze kopie / duplikaty poza tym drzewem nie są utrzymywane.
