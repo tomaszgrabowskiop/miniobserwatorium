@@ -4,6 +4,8 @@ Dokumentacja CAD i wykonawcza zdejmowalnej czapy oraz bazy dla montażu ZWO AM3 
 
 Główne wejście: **[budowa.html](budowa.html)** — instrukcja z osadzonymi modelami 3D.
 
+![Model 3D — złożenie z rozsunętymi ścianami i dachem](docs/zlozenie.png)
+
 ## Podgląd lokalny
 
 Modele ładują Three.js z CDN — wystarczy lokalny serwer HTTP (otwarcie plików przez `file://` zwykle blokuje skrypty).
@@ -33,6 +35,7 @@ Potem:
 | `modele/elektronika.html` | MPPT, LiFePO4, Pi, Wi‑Fi |
 | `modele/cad.html` | Widok CAD / wymiarowanie |
 | `Przedłużenie/` | Zdjęcia referencyjne przedłużki AliExpress |
+| `docs/zlozenie.png` | Zrzut widoku złożenia |
 
 ## Założenia konstrukcyjne
 
